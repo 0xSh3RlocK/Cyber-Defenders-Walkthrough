@@ -1,0 +1,226 @@
+DumpMe WriteUP
+
+
+First Question: 
+
+command :sha1sum Triage-Memory.mem 
+
+ans : c95e8cc8c946f95a109ea8e47a6800de10a27abd
+
+
+
+
+Second Question:
+
+command : vol.py -f Triage-Memory.mem imageinfo
+
+ans : Win7SP1x64
+
+
+Third Question:
+
+command : vol.py -f Triage-Memory.mem --profile=Win7SP1x64 pslist | grep notepad.exe
+
+ans : 3032
+
+
+
+Forth Question:
+
+command : vol.py -f Triage-Memory.mem --profile=Win7SP1x64 pslist 
+
+NOTE: we can identify the child process of wscript.exe
+when the PPID of the child is equal to the PID of the orginal prossec
+
+ans : UWkpjFjDzM.exe
+
+
+Fifth Question:
+
+command : vol.py -f Triage-Memory.mem --profile=Win7SP1x64 netscan 
+
+ans : 10.0.0.101
+
+
+
+6TH Question:
+
+command : vol.py -f Triage-Memory.mem --profile=Win7SP1x64 netscan 
+
+note: We see that there is a connection made from process UWkpjFjDzM.exe:
+
+TCPv4 10.0.0.101:49217 10.0.0.106:4444 ESTABLISHED 3496 UWkpjFjDzM.exe
+
+ans : 10.0.0.106
+
+
+7th Question:
+
+command : vol.py -f Triage-Memory.mem --profile=Win7SP1x64 dlllist > dllList.txt 
+
+cat dllList.txt | grep VCRUNTIME140.dll
+
+note : the output of the cat dllList.txt | grep VCRUNTIME140.dll is 5 procesesses
+
+ans : 5
+
+
+8th Question:
+
+command : 
+
+mkdir dump
+
+vol.py -f Triage-Memory.mem --profile=Win7SP1x64  procdump -D dump/ -p 3496 
+
+md5sum executable.3496.exe
+
+ans : 690ea20bc3bdfb328e23005d9a80c290
+
+
+
+
+9th Question:
+
+command : 
+touch hash.txt
+
+vol.py -f Triage-Memory.mem --profile=Win7SP1x64 hashdump > hash.txt
+
+
+ans : aad3b435b51404eeaad3b435b51404ee
+
+
+
+
+10TH Question:
+
+command : 
+touch vadinfo.txt
+
+vol.py -f Triage-Memory.mem --profile=Win7SP1x64 vadinfo > vadinfo.txt
+
+
+ans : PAGE_READONLY
+
+
+11TH Question:
+
+command : same vadinfo.txt in question 10 search for 0x00000000033c0000 address
+
+ans : PAGE_NOACCESS
+
+
+
+
+
+12TH Question:
+
+note: vbscript ends with .vbs
+
+
+command : vol.py -f Triage-Memory.mem --profile=Win7SP1x64 cmdline | grep .vbs
+
+
+ans : vhjReUDEuumrX
+
+
+
+12TH Question:
+
+note: vbscript ends with .vbs
+
+
+command : vol.py -f Triage-Memory.mem --profile=Win7SP1x64 cmdline | grep .vbs
+
+
+ans : vhjReUDEuumrX
+
+
+
+13TH Question:
+
+
+
+
+command : 
+
+touch shimcache.txt
+
+vol.py -f Triage-Memory.mem --profile=Win7SP1x64 shimcache > shimcache.txt
+
+
+cat shimcache.txt | grep 2019-03-07 
+
+
+ans : Skype.exe
+
+
+
+
+
+
+14TH Question: 
+
+note: put the dump in any dirctory you want
+very larg output 
+but you haven’t done the first step that you should do in every CTF challenge like this. Grep for the flag
+
+
+command : vol.py -f Triage-Memory.mem --profile=Win7SP1x64 memdump --pid=3032 --dump-dir=/root/CyberDefender/DumpMe/dump/
+          
+          strings -e l notepad.data | grep flag
+	  
+  	  	 
+
+
+ans : flag<REDBULL_IS_LIFE>
+
+
+
+15TH Question:
+
+command : 
+
+
+note : shortname is shortpath look at that link and you will understand:https://superuser.com/questions/348079/how-can-i-find-the-short-path-of-a-windows-directory-file
+
+touch MFTpasrser.txt
+
+vol.py -f Triage-Memory.mem --profile=Win7SP1x64 mftparser > MFTparser.txt
+
+
+cat MFTparser.txt | grep .XLS 
+
+
+ans : EMPLOY~1.XLS
+
+
+16TH Question:
+
+note : most meterpreter shells are on port 4444 see what exe on that port you solve the question.
+
+
+command : vol.py -f Triage-Memory.mem --profile=Win7SP1x64 netscan | grep UWkpjFjDzM.exe
+
+
+command res:0x13e397190        TCPv4    10.0.0.101:49217               10.0.0.106:4444      ESTABLISHED      3496     UWkpjFjDzM.exe 
+pid = 3496
+
+ans : 3496
+
+
+
+
+
+
+
+
+Links Was very useful 
+https://www.andreafortuna.org/2017/07/03/volatility-my-own-cheatsheet-part-2-processes-and-dlls/
+https://www.youtube.com/watch?v=eFIGgxBzD6s&t=499s
+https://superuser.com/questions/348079/how-can-i-find-the-short-path-of-a-windows-directory-file
+https://www.andreafortuna.org/2017/07/03/volatility-my-own-cheatsheet-part-2-processes-and-dlls/
+
+
+
